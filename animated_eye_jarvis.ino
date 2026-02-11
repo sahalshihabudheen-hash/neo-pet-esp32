@@ -6,8 +6,8 @@
 #include <time.h>
 
 // --- Configuration ---
-const char* ssid = "YOUR_WIFI_SSID";         // REPLACE ME
-const char* password = "YOUR_WIFI_PASSWORD"; // REPLACE ME
+const char* ssid = "HOME";         
+const char* password = "pass@123"; 
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
