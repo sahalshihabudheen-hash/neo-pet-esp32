@@ -232,6 +232,7 @@ void handleRoot() {
 }
 
 void handleAct() {
+  server.sendHeader("Access-Control-Allow-Origin", "*");
   String type = server.arg("type");
   if (type == "happy") currentEmotion = HAPPY;
   else if (type == "angry") currentEmotion = ANGRY;
@@ -245,6 +246,13 @@ void handleAct() {
   }
   server.send(200, "text/plain", "OK");
   emotionStartTime = millis();
+}
+
+void handleOptions() {
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.sendHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
+  server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
+  server.send(200);
 }
 
 // --- Setup & Loop ---
@@ -289,7 +297,8 @@ void setup() {
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   
   server.on("/", handleRoot);
-  server.on("/act", handleAct);
+  server.on("/act", HTTP_GET, handleAct);
+  server.on("/act", HTTP_OPTIONS, handleOptions);
   server.begin();
   
   reset_eyes_state();
