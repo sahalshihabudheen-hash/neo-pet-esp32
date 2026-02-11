@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEO-PET | AI Desktop Companion</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --neon-blue: #00f3ff;
@@ -23,7 +26,7 @@
 
         body {
             background-color: var(--bg-dark);
-            background-image: 
+            background-image:
                 radial-gradient(circle at 50% 50%, rgba(188, 19, 254, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(0, 243, 255, 0.1) 0%, transparent 40%);
             color: #fff;
@@ -38,13 +41,23 @@
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             animation: fadeInDown 0.8s ease-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.3));
         }
 
         .header h1 {
             font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             letter-spacing: 4px;
             background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
             -webkit-background-clip: text;
@@ -63,8 +76,29 @@
             gap: 20px;
             font-size: 0.9rem;
             color: var(--neon-blue);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             margin-bottom: 20px;
+        }
+
+        .ip-config {
+            background: var(--glass);
+            border: 1px solid var(--neon-purple);
+            padding: 5px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .ip-config input {
+            background: transparent;
+            border: none;
+            color: var(--neon-blue);
+            font-family: 'Orbitron';
+            width: 120px;
+            outline: none;
+            text-align: center;
         }
 
         .status-item {
@@ -83,9 +117,20 @@
         }
 
         @keyframes pulse-anim {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.5); opacity: 0.5; }
-            100% { transform: scale(1); opacity: 1; }
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .control-grid {
@@ -117,12 +162,6 @@
             border-color: var(--neon-blue);
             background: rgba(0, 243, 255, 0.1);
             box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
-        }
-
-        .control-card i {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            display: block;
         }
 
         .control-card label {
@@ -193,20 +232,39 @@
         }
 
         @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* Responsive */
         @media (max-width: 480px) {
-            .header h1 { font-size: 2rem; }
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .logo {
+                width: 100px;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="header">
+        <img src="logo.png" alt="Isomer Lights Logo" class="logo">
         <h1>NEO•PET</h1>
-        <p>Quantum Core AI Desktop Unity</p>
+        <p>Quantum Core AI Unity</p>
+    </div>
+
+    <div class="ip-config">
+        <label style="color:var(--neon-purple); font-size: 0.7rem; font-family: 'Orbitron';">TARGET IP:</label>
+        <input type="text" id="esp-ip" placeholder="192.168.1.XX" onchange="saveIP()">
     </div>
 
     <div class="status-bar">
@@ -254,19 +312,47 @@
     </div>
 
     <script>
+        let targetIP = localStorage.getItem('esp-ip') || '';
+        document.getElementById('esp-ip').value = targetIP;
+
+        function saveIP() {
+            targetIP = document.getElementById('esp-ip').value.trim();
+            localStorage.setItem('esp-ip', targetIP);
+            alert('Target IP Saved: ' + targetIP);
+        }
+
+        function getBaseUrl() {
+            if (!targetIP) {
+                alert('Please enter your ESP32 IP address first!');
+                return '';
+            }
+            // Ensure no leading/trailing slashes and add http://
+            let cleaned = targetIP.replace(/^https?:\/\//, '').replace(/\/$/, '');
+            return 'http://' + cleaned;
+        }
+
         function setEmotion(type) {
-            fetch('/emotion?type=' + type)
-                .then(r => console.log('Emotion set to ' + type));
-            
-            // Visual feedback
-            const cards = document.querySelectorAll('.control-card');
-            cards.forEach(c => c.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            const baseUrl = getBaseUrl();
+            if (!baseUrl) return;
+
+            fetch(`${baseUrl}/act?type=${type}`, { mode: 'no-cors' })
+                .then(() => {
+                    console.log('Emotion set to ' + type);
+                    // Visual feedback
+                    const cards = document.querySelectorAll('.control-card');
+                    cards.forEach(c => c.classList.remove('active'));
+                    event.currentTarget.classList.add('active');
+                })
+                .catch(err => alert('Failed to reach ESP32. Ensure you are on the same WiFi!'));
         }
 
         function sendCmd(cmd) {
-            fetch('/cmd?action=' + cmd)
-                .then(r => console.log('Command: ' + cmd));
+            const baseUrl = getBaseUrl();
+            if (!baseUrl) return;
+
+            fetch(`${baseUrl}/act?type=${cmd}`, { mode: 'no-cors' })
+                .then(() => console.log('Command: ' + cmd))
+                .catch(err => console.error(err));
         }
 
         // Real-time local time for UI
@@ -276,4 +362,5 @@
         }, 1000);
     </script>
 </body>
+
 </html>
