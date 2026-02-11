@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEO-PET | AI Desktop Companion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --bg-dark: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(188, 19, 254, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 243, 255, 0.1) 0%, transparent 40%);
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            letter-spacing: 4px;
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            margin-bottom: 5px;
+        }
+
+        .status-bar {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: var(--neon-blue);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-blue);
+            animation: pulse-anim 2s infinite;
+        }
+
+        @keyframes pulse-anim {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 30px;
+        }
+
+        .control-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-card:active {
+            transform: scale(0.95);
+        }
+
+        .control-card.active {
+            border-color: var(--neon-blue);
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+        }
+
+        .control-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .control-card label {
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .section-title {
+            width: 100%;
+            max-width: 400px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding-left: 10px;
+        }
+
+        .game-zone {
+            width: 100%;
+            max-width: 400px;
+            background: linear-gradient(135deg, rgba(188, 19, 254, 0.1), rgba(0, 243, 255, 0.1));
+            border: 1px dashed var(--neon-purple);
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .joy-pad {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 20px;
+        }
+
+        .joy-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--glass);
+            border: 1px solid var(--neon-purple);
+            color: var(--neon-purple);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.3);
+            cursor: pointer;
+        }
+
+        .joy-btn:active {
+            background: var(--neon-purple);
+            color: #fff;
+            transform: scale(0.9);
+        }
+
+        .footer {
+            margin-top: auto;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .header h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>NEO•PET</h1>
+        <p>Quantum Core AI Desktop Unity</p>
+    </div>
+
+    <div class="status-bar">
+        <div class="status-item">
+            <div class="pulse"></div>
+            LINK ACTIVE
+        </div>
+        <div class="status-item" id="time-display">
+            --:--:--
+        </div>
+    </div>
+
+    <div class="section-title">Emotion Matrix</div>
+    <div class="control-grid">
+        <div class="control-card" onclick="setEmotion('happy')">
+            <label>HAPPY</label>
+        </div>
+        <div class="control-card" onclick="setEmotion('angry')">
+            <label>ANGRY</label>
+        </div>
+        <div class="control-card" onclick="setEmotion('excited')">
+            <label>EXCITED</label>
+        </div>
+        <div class="control-card" onclick="setEmotion('sleepy')">
+            <label>SLEEPY</label>
+        </div>
+        <div class="control-card" onclick="setEmotion('glitch')">
+            <label>GLITCH</label>
+        </div>
+        <div class="control-card" onclick="setEmotion('scan')">
+            <label>SCAN</label>
+        </div>
+    </div>
+
+    <div class="section-title">Experimental Gaming</div>
+    <div class="game-zone">
+        <p>MINI-RUNNER ACTIVE</p>
+        <div class="joy-pad">
+            <div class="joy-btn" ontouchstart="sendCmd('jump')" onmousedown="sendCmd('jump')">JUMP</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 NEO-PET CORE SYSTEM v1.0
+    </div>
+
+    <script>
+        function setEmotion(type) {
+            fetch('/emotion?type=' + type)
+                .then(r => console.log('Emotion set to ' + type));
+            
+            // Visual feedback
+            const cards = document.querySelectorAll('.control-card');
+            cards.forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        function sendCmd(cmd) {
+            fetch('/cmd?action=' + cmd)
+                .then(r => console.log('Command: ' + cmd));
+        }
+
+        // Real-time local time for UI
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('time-display').innerText = now.toLocaleTimeString();
+        }, 1000);
+    </script>
+</body>
+</html>
